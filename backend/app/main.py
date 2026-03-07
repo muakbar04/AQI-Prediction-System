@@ -22,14 +22,10 @@ app = FastAPI(
 # --- CORS Configuration ---
 # This allows your React frontend (typically running on port 3000) 
 # to make requests to this FastAPI backend (running on port 8000).
-origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:4173",
-    "http://127.0.0.1:4173",
-]
+origins = os.getenv(
+    "CORS_ORIGINS",
+    "http://localhost:5173,http://localhost:3000"
+).split(",")
 
 app.add_middleware(
     CORSMiddleware,
