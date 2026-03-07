@@ -1,0 +1,16 @@
+name: Hourly AQI Data Sync
+
+on:
+  schedule:
+    # "0 * * * *" means at minute 0 past every hour
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allows you to click a "Run Workflow" button manually
+
+jobs:
+  ping-refresh-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Live Backend Refresh
+        # The curl command sends a POST request to your Render API
+        # Make sure to replace this with your actual Render URL!
+        run: curl -X POST ${{ secrets.PROD_API_URL }}/api/refresh
