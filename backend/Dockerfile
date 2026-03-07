@@ -40,7 +40,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 # 4. Copy your actual backend code
 COPY . .
 
-EXPOSE 8000
+EXPOSE 7860
 
 # 5. Start the server
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port 7860"]
