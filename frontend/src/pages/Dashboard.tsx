@@ -188,7 +188,7 @@ export const Dashboard = () => {
   const peakInfo = useMemo(() => {
     if (!forecastData?.length) return null;
     const peak = [...forecastData].sort((a, b) => b.forecastAqi - a.forecastAqi)[0];
-    return { aqi: peak.forecastAqi, time: format(parseISO(peak.timestamp), 'EEEE at h:mm a'), ...getAqiColor(peak.forecastAqi) };
+    return { aqi: peak.forecastAqi, time: format(parseISO(peak.timestamp), "EEEE 'at' h:mm a"), ...getAqiColor(peak.forecastAqi) };
   }, [forecastData]);
 
   const dailyAverages = useMemo(() => {
