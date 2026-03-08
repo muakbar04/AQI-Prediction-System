@@ -74,7 +74,7 @@ The backend exposes a RESTful API. Below are the primary public routes:
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
+git clone https://github.com/muakbar04/AQI-Prediction-System.git
 cd your-repo-name
 
 ```
