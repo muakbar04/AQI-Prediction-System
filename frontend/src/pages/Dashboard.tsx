@@ -206,6 +206,18 @@ export const Dashboard = () => {
     }));
   }, [forecastData]);
 
+  // Calculates if the latest data is from the current hour
+  const isDataFresh = useMemo(() => {
+    if (!historyData?.current?.timestamp) return false;
+    
+    const latestTime = parseISO(historyData.current.timestamp).getTime();
+    const now = new Date().getTime();
+    const diffMinutes = (now - latestTime) / (1000 * 60);
+    
+    // If the data is less than 60 minutes old, it's fresh
+    return diffMinutes < 60 && diffMinutes >= 0;
+  }, [historyData]);
+
   /* ── Loading ── */
   if (historyLoading) {
     return (
@@ -251,19 +263,6 @@ export const Dashboard = () => {
 
   const { current, history } = historyData;
   const aqiInfo = getAqiColor(current.aqi);
-
-  // --- ADD THIS NEW BLOCK ---
-  // Calculates if the latest data is from the current hour
-  const isDataFresh = useMemo(() => {
-    if (!current?.timestamp) return false;
-    const latestTime = parseISO(current.timestamp).getTime();
-    const now = new Date().getTime();
-    const diffMinutes = (now - latestTime) / (1000 * 60);
-    
-    // If the data is less than 60 minutes old, it's fresh
-    return diffMinutes < 60 && diffMinutes >= 0;
-  }, [current]);
-  // --------------------------
 
   return (
     <div style={{ minHeight: '100vh', background: '#020a18', color: '#e2e8f0', fontFamily: "'DM Mono', 'JetBrains Mono', 'Fira Code', monospace" }}>
