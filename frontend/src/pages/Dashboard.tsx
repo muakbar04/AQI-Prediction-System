@@ -11,7 +11,7 @@ import { api } from '../api/api';
 import { AqiCard } from '../components/AqiCard.tsx';
 
 /* ─── Types ───────────────────────────────────────────────── */
-interface CurrentData { pm25: number; pm25_diff: number; aqi: number; temp: number; wind: number; }
+interface CurrentData { timestamp: string; pm25: number; pm25_diff: number; aqi: number; temp: number; wind: number; }
 interface HistoryItem { timestamp: string; pm25: number; aqi: number; }
 interface ForecastItem { timestamp: string; forecastAqi: number; }
 interface ShapItem { feature: string; impact: number; }
@@ -252,6 +252,19 @@ export const Dashboard = () => {
   const { current, history } = historyData;
   const aqiInfo = getAqiColor(current.aqi);
 
+  // --- ADD THIS NEW BLOCK ---
+  // Calculates if the latest data is from the current hour
+  const isDataFresh = useMemo(() => {
+    if (!current?.timestamp) return false;
+    const latestTime = parseISO(current.timestamp).getTime();
+    const now = new Date().getTime();
+    const diffMinutes = (now - latestTime) / (1000 * 60);
+    
+    // If the data is less than 60 minutes old, it's fresh
+    return diffMinutes < 60 && diffMinutes >= 0;
+  }, [current]);
+  // --------------------------
+
   return (
     <div style={{ minHeight: '100vh', background: '#020a18', color: '#e2e8f0', fontFamily: "'DM Mono', 'JetBrains Mono', 'Fira Code', monospace" }}>
       <ParticleGrid />
@@ -315,23 +328,36 @@ export const Dashboard = () => {
             </div>
 
             <button
-              onClick={() => refreshMutation.mutate()}
-              disabled={refreshMutation.isPending}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all"
+              onClick={() => {
+                if (isDataFresh) return; // Failsafe
+                refreshMutation.mutate();
+              }}
+              disabled={refreshMutation.isPending || isDataFresh}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all ${
+                isDataFresh ? 'cursor-not-allowed' : 'cursor-pointer'
+              }`}
               style={{
-                background: 'rgba(0,229,255,0.06)',
-                border: '1px solid rgba(0,229,255,0.2)',
-                color: 'rgba(0,229,255,0.8)',
+                background: isDataFresh ? 'rgba(0,230,118,0.06)' : 'rgba(0,229,255,0.06)',
+                border: isDataFresh ? '1px solid rgba(0,230,118,0.2)' : '1px solid rgba(0,229,255,0.2)',
+                color: isDataFresh ? '#00e676' : 'rgba(0,229,255,0.8)',
                 fontSize: 12,
                 fontWeight: 700,
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,229,255,0.12)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,229,255,0.06)'; }}
+              onMouseEnter={e => { 
+                if (!isDataFresh) e.currentTarget.style.background = 'rgba(0,229,255,0.12)'; 
+              }}
+              onMouseLeave={e => { 
+                if (!isDataFresh) e.currentTarget.style.background = 'rgba(0,229,255,0.06)'; 
+              }}
             >
-              <RefreshCw size={14} className={refreshMutation.isPending ? 'animate-spin' : ''} />
-              {refreshMutation.isPending ? 'Syncing' : 'Refresh'}
+              {isDataFresh ? (
+                <CheckCircle size={14} />
+              ) : (
+                <RefreshCw size={14} className={refreshMutation.isPending ? 'animate-spin' : ''} />
+              )}
+              {refreshMutation.isPending ? 'Syncing...' : isDataFresh ? 'Up to date' : 'Refresh'}
             </button>
           </div>
         </div>
