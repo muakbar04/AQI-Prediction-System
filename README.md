@@ -9,7 +9,6 @@
 An AI-powered Air Quality Index (AQI) forecasting system specifically designed for Karachi, Pakistan. It fetches real-time meteorological and pollution data, utilizes an XGBoost machine learning model to generate a 72-hour predictive forecast, and provides feature explainability using SHAP values.
 
 **Live Dashboard:** [https://aqi-prediction-system-two.vercel.app/](https://aqi-prediction-system-two.vercel.app/)  
-**Live API Docs (Swagger UI):** [https://muakbar9211-karachi-aqi-api.hf.space/docs](https://muakbar9211-karachi-aqi-api.hf.space/docs)
 
 ---
 
